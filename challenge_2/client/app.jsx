@@ -21,18 +21,21 @@ class App extends React.Component {
           console.log('error retrieving data', err);
         },
         success: (data) => {
-          console.log('successfully retrieved data', JSON.parse(data));
-          for (let i = 0; i < JSON.parse(data).bpi.length; i += 1) {
-            for (let key in JSON.parse(data).bpi){
-              const obj = {};
-              obj.date = key;
-              obj.price = JSON.parse(data).bpi[key];
-            }
+          // console.log('successfully retrieved data', JSON.parse(data));
+          const results = [];
+          const dataObj = JSON.parse(data);
+          for (const dates in dataObj.bpi) {
+            const obj = {};
+            obj.date = dates;
+            obj.price = dataObj.bpi[dates];
+            results.push(obj);
           }
           this.setState(
             {
-              data: JSON.parse(data),
-            },
+              data: results,
+            }, () => {
+              console.log('state is now', this.state.data)
+            }
           );
           this.createChart();
         },

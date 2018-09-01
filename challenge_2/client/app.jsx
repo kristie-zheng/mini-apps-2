@@ -29,9 +29,6 @@ class App extends React.Component {
             const obj = {};
             datesArr.push(dates);
             pricesArr.push(dataObj.bpi[dates]);
-            // obj.date = dates;
-            // obj.price = dataObj.bpi[dates];
-            // results.push(obj);
           }
           this.setState({
             dates: datesArr,
@@ -51,25 +48,22 @@ class App extends React.Component {
         labels: this.state.dates,
         datasets: [
           {
-            label: "Bitcoin",
-            data: this.state.prices
-          }
+            label: 'Bitcoin',
+            data: this.state.prices,
+          },
         ],
-      options: {
-        title: {
-          display: true,
-          text: 'Bitcoin Month Price Trend'
+        options: {
+          title: {
+            display: true,
+            text: 'Bitcoin Prices',
+            fontSize: 20,
+          },
+          borderColor: 'pink',
         },
-        borderColor: 'pink',
       },
-    }
+    });
   }
-  )
-    
 
-
-  }
- 
   render() {
     return (
       <div>

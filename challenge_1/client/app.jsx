@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import $ from 'jquery';
+import ReactPaginate from 'react-paginate';
 import Search from './search.jsx';
 import ResultList from './resultList.jsx';
 import ResultListEntry from './resultListEntry.jsx';
-import $ from 'jquery';
-import ReactPaginate from 'react-paginate';
 
 class App extends React.Component {
   constructor(props) {
@@ -26,14 +26,6 @@ class App extends React.Component {
   // seems that JSON-server sends the data back on error event
   handleClick() {
     const urlString = `http://localhost:3000/events?q=${this.state.searchQuery}&_page=${this.state.pageCount}`;
-    // var axr = $.ajax({
-    //   type: 'HEAD',
-    //   url: urlString,
-    //   success: (data) => {
-    //     let tc = axr.getResponseHeader('X-Total-Count');
-    //     console.log(tc)
-    //   }
-    // })
     var ajaxReq = $.ajax({
       method: 'GET',
       url: urlString,
@@ -50,8 +42,9 @@ class App extends React.Component {
     });
   }
 
-  handlePagination() {
-  {/*let selected = this will be the number of the current page*/}
+  handlePagination(data) {
+    this.setState({ pageCount: data.selected });
+    this.handleClick();
   }
 
   render() {
@@ -62,7 +55,8 @@ class App extends React.Component {
         <ReactPaginate 
           pageCount={ this.state.numberPages }
           pageRangeDisplayed={30}
-          marginPagesDisplayed={2}/>
+          marginPagesDisplayed={2}
+          onPageChange={this.handlePagination.bind(this)}/>
       </div>
     );
   }

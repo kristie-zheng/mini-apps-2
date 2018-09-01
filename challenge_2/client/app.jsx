@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import Graph from './Graph.jsx';
-import Chart from 'chart';
+import Chart from 'chart.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      dates: [],
+      prices: [],
     };
   }
 
@@ -21,22 +21,22 @@ class App extends React.Component {
           console.log('error retrieving data', err);
         },
         success: (data) => {
-          // console.log('successfully retrieved data', JSON.parse(data));
           const results = [];
+          const datesArr = [];
+          const pricesArr = [];
           const dataObj = JSON.parse(data);
           for (const dates in dataObj.bpi) {
             const obj = {};
-            obj.date = dates;
-            obj.price = dataObj.bpi[dates];
-            results.push(obj);
+            datesArr.push(dates);
+            pricesArr.push(dataObj.bpi[dates]);
+            // obj.date = dates;
+            // obj.price = dataObj.bpi[dates];
+            // results.push(obj);
           }
-          this.setState(
-            {
-              data: results,
-            }, () => {
-              console.log('state is now', this.state.data)
-            }
-          );
+          this.setState({
+            dates: datesArr,
+            prices: pricesArr,
+          });
           this.createChart();
         },
       },
@@ -44,25 +44,41 @@ class App extends React.Component {
   }
 
   createChart() {
-    const elementToRenderOn = document.getElementById('chart');
-    const lineGraph = new Chart (elementToRenderOn, {
+    const elementToRenderOn = document.getElementById('thechart');
+    const lineGraph = new Chart(elementToRenderOn, {
       type: 'line',
-      data: this.state.data,
-    });
+      data: {
+        labels: this.state.dates,
+        datasets: [
+          {
+            label: "Bitcoin",
+            data: this.state.prices
+          }
+        ],
+      options: {
+        title: {
+          display: true,
+          text: 'Bitcoin Month Price Trend'
+        },
+        borderColor: 'pink',
+      },
+    }
   }
+  )
+    
 
+
+  }
+ 
   render() {
     return (
       <div>
-        <Graph />
         <p>
-          Powered by CoinDesk 
+          Powered by CoinDesk
         </p>
       </div>
-      );
-
-    // <Graph />
+    );
   }
 }
-ReactDOM.render(<App />, document.getElementById('app'));
 
+ReactDOM.render(<App />, document.getElementById('app'));

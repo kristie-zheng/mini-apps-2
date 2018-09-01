@@ -12,7 +12,8 @@ class App extends React.Component {
     this.state = {
       searchQuery: 'default',
       eventList: [],
-      pageCount: 0,
+      numberPages: 1,
+      pageCount: 1,
     };
     this.onChange = this.onChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -24,12 +25,23 @@ class App extends React.Component {
 
   // seems that JSON-server sends the data back on error event
   handleClick() {
-    const urlString = `http://localhost:3000/events?q=${this.state.searchQuery}`;
-    $.ajax({
+    const urlString = `http://localhost:3000/events?q=${this.state.searchQuery}&_page=${this.state.pageCount}`;
+    // var axr = $.ajax({
+    //   type: 'HEAD',
+    //   url: urlString,
+    //   success: (data) => {
+    //     let tc = axr.getResponseHeader('X-Total-Count');
+    //     console.log(tc)
+    //   }
+    // })
+    var ajaxReq = $.ajax({
       method: 'GET',
       url: urlString,
+      type: 'head',
       error: (err) => {
-        this.setState({ eventList: JSON.parse(err.responseText) });
+        let totalCount = ajaxReq.getResponseHeader('X-Total-Count');
+        this.setState({ eventList: JSON.parse(err.responseText),
+        numberPages: Math.ceil(totalCount/10) });
       },
       success: (data) => {
         console.log('data retrieved from server', data);
@@ -47,7 +59,10 @@ class App extends React.Component {
       <div>
         <Search onChange={this.onChange} handleClick={this.handleClick}/>
         <ResultList eventList={this.state.eventList}/>
-        <ReactPaginate />
+        <ReactPaginate 
+          pageCount={ this.state.numberPages }
+          pageRangeDisplayed={30}
+          marginPagesDisplayed={2}/>
       </div>
     );
   }
